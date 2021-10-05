@@ -1,20 +1,33 @@
 module Lib
-    ( someFunc
+    ( someFunc,
+      generate,
+      DrawingSettings,
+      lineSpacing
+
     ) where
 
-import Representation (TonalitySystem, Music)
+--import Representation (TonalitySystem, Music)
+import AltRep (Music)
 import Diagrams.Prelude
 import Diagrams.Backend.SVG.CmdLine
+
+import Data.Default
 
 someFunc :: IO ()
 someFunc = putStrLn "someFunc"
 
-generate :: DrawingSettings -> TonalitySystem -> [Music a b] -> Diagram B
-generate d t = vcat.map (drawStaff d t)
+generate :: DrawingSettings ->  [Music a b] -> Diagram B
+generate d = vcat.map (drawStaff d)
 
-drawStaff :: DrawingSettings -> TonalitySystem -> Music a b-> Diagram B
-drawStaff d t m = circle 1
+drawStaff :: DrawingSettings ->  Music a b-> Diagram B
+drawStaff d m = example $ lineSpacing d
 
-type SizeT = Rational
+line = strokeT . fromOffsets $ [unitX]
+example s = vcat' (with & sep .~ s) (replicate 5 line)
 
-data DrawingSettings = DrawingSettings { lineSpacing :: SizeT }
+type SizeT = Double
+
+newtype DrawingSettings = DrawingSettings { lineSpacing :: SizeT }
+
+instance Default DrawingSettings where
+    def = DrawingSettings {lineSpacing = 0.1}

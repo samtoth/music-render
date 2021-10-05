@@ -32,8 +32,8 @@ lift x y =
       sink = x
     }
 
-m1 :: b -> Music Int b
-m1 = lift 1 
+--m1 :: b -> Music Int b
+--m1 = lift 1 
 
 (+>) :: Semigroup a => Music a b -> Music a b -> Music a b
 x +> y =

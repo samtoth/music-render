@@ -1,24 +1,66 @@
 {-# LANGUAGE NoMonomorphismRestriction #-}
 {-# LANGUAGE FlexibleContexts          #-}
 {-# LANGUAGE TypeFamilies              #-}
+{-# LANGUAGE OverloadedStrings         #-}
+{-# LANGUAGE DataKinds                 #-}
+{-# LANGUAGE TypeOperators             #-}
+{-# LANGUAGE MultiParamTypeClasses #-}
 
 module Main where
 
 import GHC.Float
+import Data.Maybe (fromMaybe)
+import Text.Read (readMaybe)
+import System.Environment (lookupEnv)
+
 import Diagrams.Prelude
-import Diagrams.Backend.SVG.CmdLine
+import Diagrams.Backend.SVG
 
-aCircle :: Double -> Diagram B
-aCircle n = circle n  # fc blue
-                    # lw veryThick
+import Graphics.Svg.Core
 
-diagram :: Int -> Int -> Diagram B
-diagram x y = vcat (replicate y $ hcat (map alignT (map aCircle [ 1 .. int2Double x ])))
+import qualified Network.HTTP.Media as M
 
-myDi :: Diagram B
-myDi = let point = circle 0.8 # fc black
-        in atPoints (regPoly 6 1) (repeat point)
+import Servant
+--import Lucid.Servant
+--import Lucid
+
+import qualified Data.Text as T
+import Data.Text.Lazy.Encoding (encodeUtf8)
+import qualified Data.Text.Lazy as LT
+import qualified Data.ByteString as BS
+
+import qualified Network.Wai.Handler.Warp as Warp
+
+import Lib (generate, lineSpacing)
+import AltRep
+
+data SVGMime
+
+instance Accept SVGMime where
+    contentType _ = "image" M.// "svg+xml"
+
+
+instance MimeRender SVGMime Element where
+    mimeRender _ = encodeUtf8.renderText
+
+type SimpleApi = "test" :> Get '[SVGMime] Element
+
+renderElem :: Diagram B -> Element
+renderElem = renderDia SVG (SVGOptions (mkWidth 600) Nothing "" [] True)
+
+server :: Server SimpleApi
+server = return . renderElem $ generate def{lineSpacing=0.009} [AltRep.Prim 1 :+: AltRep.Prim 2] # frame 0.1
+
+serverApi :: Proxy SimpleApi
+serverApi = Proxy
+
+app = serve serverApi server
 
 main :: IO ()
--- main = mainWith $ vrule 25 ||| diagram 5 5
-main = mainWith myDi
+--main = Data.Text.IO.putStrLn.LT.toStrict.renderText.renderElem $ diagram 2 2
+main = do
+        port <- fmap (fromMaybe 8000 . (>>= readMaybe)) (lookupEnv "PORT")
+        putStrLn $ "http://localhost:" ++ show port ++ "/"
+        Warp.run port app
+
+

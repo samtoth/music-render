@@ -35,11 +35,21 @@ library
       src
   build-depends:
       base >=4.7 && <5
+    , bytestring
+    , colour
+    , data-default
     , diagrams
     , diagrams-contrib
     , diagrams-core
     , diagrams-lib
     , diagrams-svg
+    , http-media
+    , lucid
+    , servant-lucid
+    , servant-server
+    , svg-builder
+    , text
+    , warp
   default-language: Haskell2010
 
 executable music-render-exe
@@ -51,12 +61,22 @@ executable music-render-exe
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       base >=4.7 && <5
+    , bytestring
+    , colour
+    , data-default
     , diagrams
     , diagrams-contrib
     , diagrams-core
     , diagrams-lib
     , diagrams-svg
+    , http-media
+    , lucid
     , music-render
+    , servant-lucid
+    , servant-server
+    , svg-builder
+    , text
+    , warp
   default-language: Haskell2010
 
 test-suite music-render-test
@@ -69,10 +89,20 @@ test-suite music-render-test
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       base >=4.7 && <5
+    , bytestring
+    , colour
+    , data-default
     , diagrams
     , diagrams-contrib
     , diagrams-core
     , diagrams-lib
     , diagrams-svg
+    , http-media
+    , lucid
     , music-render
+    , servant-lucid
+    , servant-server
+    , svg-builder
+    , text
+    , warp
   default-language: Haskell2010

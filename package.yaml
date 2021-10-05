@@ -26,6 +26,16 @@ dependencies:
 - diagrams-contrib
 - diagrams-svg
 - diagrams-core
+- servant-server
+- servant-lucid
+- http-media
+- lucid
+- warp
+- text
+- svg-builder
+- bytestring
+- colour
+- data-default
 
 library:
   source-dirs: src
